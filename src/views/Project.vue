@@ -1,47 +1,141 @@
 <template>
-  <div class="flex flex-col items-center">
-    <div>
-      <cardProject :cardEvents="cardProjects1" />
+  <section class="p-5">
+    <div class="text-center mt-5">
+      <h1 class="text-4xl">My Work</h1>
+      <div class="mt-1">
+        <span class="text-lg">{ Click on a project to see more details }</span>
+      </div>
     </div>
-    <div>
-      <cardProject :cardEvents="cardProjects2" />
+    <div class="main">
+      <div
+        class="card"
+        v-for="(cardProject, index) in allCardProjects"
+        :key="index"
+        @click="showDialog(index)"
+      >
+        <div class="card2">
+          <img
+            :src="cardProject.image"
+            alt="Project Image"
+            class="text-white h-[350px] rounded-md"
+            width="460px"
+          />
+        </div>
+      </div>
     </div>
-    <div>
-      <cardProject :cardEvents="cardProjects3" />
+    <div v-if="loading" class="main">
+      <div
+        v-for="index in 6"
+        :key="index"
+        class="skeleton h-[350px] w-[350px] relative bottom-[3.5rem]"
+      ></div>
     </div>
-  </div>
+  </section>
+
+  <dialogModal
+    v-if="selectedProject"
+    :title="selectedProject.title"
+    :descriptions="selectedProject.descriptions"
+    :technologyUsed="selectedProject.technologyUsed"
+    :url="selectedProject.url"
+  />
 </template>
 
 <script setup>
-import cardProject from "../components/card-project.vue";
+import { ref, onMounted } from "vue";
+import comingProject from "@/assets/coming-project.webp";
+import usernameGithubGif from "@/assets/username-github.gif";
+import weatherApp from "@/assets/weather-app.gif";
+import shopifyApi from "@/assets/shopify-api.gif";
+import dialogModal from "@/components/dialog-modal.vue"
+import { nextTick } from 'vue';
 
-const cardProjects1 = [
+const loading = ref(true);
+const allCardProjects = ref([]);
+const selectedProject = ref(null);
+
+const dialogInfo = [
   {
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6zs5Noz8Xlz1aWOkwIZDKT1OHyD5wz31jvg&s",
-    title: "Blog",
-    para: "Written blogs to inspiration my knowledge and challenge.",
-    url: "https://web.facebook.com/",
+    title: "GitHub Username Search",
+    descriptions: "This app is used to find usernames on GitHub by searching the account's username and providing additional user information like profile picture and a direct link to the account.",
+    technologyUsed: "Vue.js(Composition Api), Github API, Tailwind CSS, DaisyUI",
+    url: "https://username-github-search.vercel.app/"
   },
-];
-const cardProjects2 = [
   {
-    image:
-      "https://imgs.search.brave.com/h6A6v_vDTm7nTSaFAFSGZQ_alYK8amNzOJA6Y6NJQjc/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/ZnJlZS1waG90by92/aWV3LTNkLWNpbmVt/YS10aGVhdHJlLXJv/b21fMjMtMjE1MDg2/NjA2Ny5qcGc_c2l6/ZT02MjYmZXh0PWpw/Zw",
-    title: "Cinema",
-    para: "Building cinemas website for booking ticket and more.",
-    url: "",
+    title: "Weather App",
+    descriptions: "A weather app that provides real-time weather information based on the user's location.",
+    technologyUsed: "Vue.js(Composition Api), OpenWeather API, Tailwind CSS, DaisyUI",
+    url: "https://weather-app-vuee.vercel.app/"
   },
-];
-const cardProjects3 = [
   {
-    image:
-      "https://imgs.search.brave.com/PWPRYq7J-jD45m_TC9GScaMOBLsB-380AZepk-07i0E/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/cHJlbWl1bS1waG90/by9vbmxpbmUtc2hv/cHBpbmctd2l0aC1j/b21wdXRlci1jYXJ0/LXBhY2thZ2VzLWdp/ZnQtYm94XzEzMDUz/ODUtMjYxMi5qcGc_/c2l6ZT02MjYmZXh0/PWpwZw",
-    title: "Shopping",
-    para: "This Shopping website for client business online store.",
-    url: "",
-  },
+    title: "Shopify API Integration",
+    descriptions: "This project is using UI from KDMV shopify, this project also integrated with Shopify's API to manage products and orders.",
+    technologyUsed: "Vue.js(Composition Api), Shopify API, Tailwind CSS",
+    url: "https://shopify-api-integration.vercel.app/"
+  }
 ];
+
+onMounted(() => {
+  setTimeout(() => {
+    allCardProjects.value = [
+
+      { image: usernameGithubGif },
+      { image: weatherApp },
+      { image: shopifyApi },
+      { image: comingProject },
+      { image: comingProject },
+      { image: comingProject }
+    ];
+    loading.value = false;
+  }, 1500);
+});
+
+async function showDialog(index) {
+  selectedProject.value = dialogInfo[index];
+  await nextTick();
+  document.getElementById("my_modal_3").showModal();
+}
 </script>
 
-<style lang="scss" scoped></style>
+<style scoped>
+.main {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  margin: auto;
+  justify-items: center;
+  max-width: 1200px;
+  gap: 1.5rem;
+  margin-top: 3.5rem;
+  margin-bottom: 3.5rem;
+}
+
+.card {
+  width: 100%;
+  max-width: 460px;
+  height: 350px;
+  background-image: linear-gradient(163deg, #00ff75 0%, #3700ff 100%);
+  border-radius: 10px;
+  transition: all 0.3s;
+  box-shadow: 0px 0px 10px 0px rgba(0, 255, 117, 0.3);
+}
+
+.card2 {
+  width: 100%;
+  max-width: 460px;
+  height: 350px;
+  border-radius: 10px;
+  background-color: #1a1a1a;
+  transition: all 0.2s;
+}
+
+.card2:hover {
+  transform: scale(0.98);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.card:hover {
+  box-shadow: 0px 0px 30px 1px rgba(0, 255, 117, 0.3);
+  border-radius: 10px;
+}
+</style>
